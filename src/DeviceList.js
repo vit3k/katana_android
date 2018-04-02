@@ -4,18 +4,16 @@ import { View, FlatList, TouchableOpacity, Text } from 'react-native';
 import { UsbMidi, UsbMidiDevice } from './UsbMidi';
 import { Katana } from './Katana';
 
-export default class Usb extends Component {
+export default class DeviceList extends Component {
     state = {
-        devices: [],
-        device: null
+        devices: []
     }
-    midi = new UsbMidi();
+
     componentDidMount = async () => {
         this.getOutputDevices();
-        await this.midi.init();
     }
     getOutputDevices = async () => {
-        let devices = await this.midi.getOutputDevices();
+        let devices = await this.props.midi.getOutputDevices();
         console.log(devices);
         this.setState({
             devices
@@ -32,13 +30,16 @@ export default class Usb extends Component {
         //await katana.set([0x60, 0x00, 0x12, 0x14], [1]);
         //await katana.query([0x60, 0x00, 0x12, 0x14]);
     }
+    select = async (item) => {
+        this.props.select(item);
+    }
     render() {
         return <View>
-            <TouchableOpacity onPress={this.getOutputDevices}><Text>Get devices</Text></TouchableOpacity>
+            <TouchableOpacity onPress={this.getOutputDevices}><Text style={{fontSize: 20}}>Get devices</Text></TouchableOpacity>
             <FlatList
             keyExtractor = {item => item.address}
             data = {this.state.devices}
-            renderItem = { ({item}) => <TouchableOpacity onPress={ () => this.send(item)}><Text style={{fontSize: 20}}>{item.name}</Text></TouchableOpacity>}
+            renderItem = { ({item}) => <TouchableOpacity onPress={ () => this.select(item)}><Text style={{fontSize: 20}}>{item.name}</Text></TouchableOpacity>}
             />
         </View>
     }
