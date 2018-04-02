@@ -20,7 +20,7 @@ public class MidiPackage implements ReactPackage {
         List<NativeModule> modules = new ArrayList<>();
 
         modules.add(new MidiModule(reactContext));
-
+        modules.add(new UsbMidiModule(reactContext));
         return modules;
     }
 

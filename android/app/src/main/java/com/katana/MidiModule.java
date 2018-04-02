@@ -11,6 +11,7 @@ import android.media.midi.MidiManager;
 import android.media.midi.MidiOutputPort;
 import android.media.midi.MidiReceiver;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import static android.bluetooth.BluetoothProfile.GATT;
+import static com.facebook.react.common.ReactConstants.TAG;
 
 /**
  * Created by witek on 28.03.2018.
@@ -73,14 +75,15 @@ public class MidiModule extends ReactContextBaseJavaModule {
     final Map<Integer, Device> devices;
     final Map<Integer, MidiDeviceInfo> deviceInfos;
 
+
     public MidiModule(ReactApplicationContext reactContext) {
         super(reactContext);
         midiManager = (MidiManager)reactContext.getSystemService(Context.MIDI_SERVICE);
         devices = new HashMap<>();
         deviceInfos = new HashMap<>();
-        if (reactContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
+        /*if (reactContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_MIDI)) {
             reactContext.getCurrentActivity().finish();
-        }
+        }*/
     }
 
     private void emit(String eventName, Object params) {
@@ -177,13 +180,14 @@ public class MidiModule extends ReactContextBaseJavaModule {
         return devices.get(deviceId);
     }
     @ReactMethod
-    public void openInputPort(int deviceId, int portNumber) {
+    public void openInputPort(int deviceId, int portNumber, final Promise promise) {
         Device device = devices.get(deviceId);
         device.openInputPort(portNumber);
+        promise.resolve(null);
     }
 
     @ReactMethod
-    void openOutputPort(final int deviceId, final int portNumber) {
+    void openOutputPort(final int deviceId, final int portNumber, final Promise promise) {
         Device device = getDevice(deviceId);
         device.openOutputPort(0, new MidiReceiver() {
             @Override
@@ -199,19 +203,22 @@ public class MidiModule extends ReactContextBaseJavaModule {
                 emit("MIDI_DATA_RECEIVED", params);
             }
         });
+        promise.resolve(null);
     }
 
     @ReactMethod
-    public void send(int deviceId, int portNumber, ReadableArray data) {
+    public void send(int deviceId, int portNumber, ReadableArray data, Promise promise) {
         try {
             byte[] byteData = new byte[data.size()];
             for(int i = 0; i < data.size(); i++) {
+                Log.d(TAG, Integer.toHexString(data.getInt(i)));
                 byteData[i] = (byte)data.getInt(i);
             }
             Device device = getDevice(deviceId);
             device.send(portNumber, byteData);
+            promise.resolve(null);
         } catch(IOException ex) {
-
+            promise.reject(ex);
         }
     }
 }

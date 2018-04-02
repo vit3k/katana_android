@@ -3,7 +3,7 @@ import { NativeModules } from 'react-native';
 import EventEmitter from 'EventEmitter';
 
 const MidiNative = NativeModules.Midi;
-const midiEmitter = new NativeEventEmitter(Midi);
+const midiEmitter = new NativeEventEmitter(MidiNative);
 
 export class Midi {
     constructor() {
@@ -12,7 +12,9 @@ export class Midi {
     }
     openBluetoothDevice = async (addr) => {
         let device = await MidiNative.openBluetoothDevice(addr);
-        return new MidiDevice(this, device);
+        let midiDevice = new MidiDevice(this, device);
+        await midiDevice.init();
+        return midiDevice;
     }
     handleMidiData = (data) => {
         this.eventEmitter.emit(`MIDI_DATE_RECEIVED_${data.deviceId}_${data.portNumber}`, data.data);
@@ -24,17 +26,19 @@ export class Midi {
 
 export class MidiDevice {
     constructor(midi, device, inputPort = 0, outputPort = 0) {
-        MidiNative.openInputPort(device.id, inputPort);
-        //MidiNative.openOutputPort(device.id, outputPort);
+
         this.inputPort = inputPort;
         this.outputPort = outputPort;
         this.device = device;
         this.midi = midi;
     }
-
-    send = (data) => {
+    async init() {
+        await MidiNative.openInputPort(this.device.id, this.inputPort);
+        await MidiNative.openOutputPort(this.device.id, this.outputPort);
+    }
+    send = async (data) => {
         console.log(data);
-        MidiNative.send(this.device.id, this.inputPort, data);
+        await MidiNative.send(this.device.id, this.inputPort, data);
     }
 
     onReceive = (handler) => {

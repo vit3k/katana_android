@@ -2,28 +2,28 @@ export class Katana {
     constructor(midiDevice) {
       this.midiDevice = midiDevice;
       midiDevice.onReceive(this.onReceive);
-      this.set([0x7F, 0x00, 0x00, 0x01], 0x01);
     }
-
+    async init() {
+        await this.set([0x7F, 0x00, 0x00, 0x01], [0x01]);
+    }
     onReceive = (data) => {
         console.log(data);
     }
 
-    send(addr, command, data = []) {
+    async send(addr, command, data = []) {
       let rawData = [...addr, ...data];
-      //let sysexData = [0xF0, 0x41, 0x00, 0x00, 0x00, 0x00, 0x33, command, ...rawData, this.calculateChecksum(rawData), 0xF7];
-      let sysexData = [0x00, 0x41, 0x00, 0x00, 0x00, 0x00, 0x33, command, ...rawData, this.calculateChecksum(rawData), 0x07];
+      let sysexData = [0xF0, 0x41, 0x00, 0x00, 0x00, 0x00, 0x33, command, ...rawData, this.calculateChecksum(rawData), 0xF7];
       console.log(sysexData);
-      this.midiDevice.send(sysexData);
+      await this.midiDevice.send(sysexData);
     }
 
-    query(addr) {
-      return this.send(addr, 0x11);
+    async query(addr, size = 1) {
+      await this.send(addr, 0x11, [0x00, 0x00, 0x00, size]);
     }
 
-    set(addr, data) {
-        console.log(`${addr}, ${data}`);
-      return this.send(addr, 0x12, data);
+    async set(addr, data) {
+      console.log(`${addr}, ${data}`);
+      await this.send(addr, 0x12, data);
     }
 
     calculateChecksum(data) {

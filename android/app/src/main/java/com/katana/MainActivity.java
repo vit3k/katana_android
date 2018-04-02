@@ -29,7 +29,13 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d( "ReactNativeDebugOutput", "MainActivity::onCreate() " + savedInstanceState );
+        UsbMidiModule.initDriver(this);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UsbMidiModule.closeDriver();
     }
 
 
