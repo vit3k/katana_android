@@ -5,7 +5,6 @@
  */
 
 import React, { Component } from 'react';
-import Ble from './Ble';
 import Usb from './Usb';
 
 export default class App extends Component {

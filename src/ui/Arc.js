@@ -59,8 +59,39 @@ export default class Arc extends Component {
     strokeWidth: 0,
     direction: 'clockwise',
   };
+  state = {
+    path: ''
+  }
+  shouldComponentUpdate() {
+    return true;
+  }
+  componentWillReceiveProps(nextProps) {
+    const {
+      startAngle,
+      endAngle,
+      radius,
+      offset,
+      direction,
+      strokeCap,
+      strokeWidth,
+      ...restProps
+    } = nextProps;
 
+    const path = makeArcPath(
+      (offset.left || 0) + (strokeWidth / 2),
+      (offset.top || 0) + (strokeWidth / 2),
+      startAngle,
+      endAngle,
+      radius - (strokeWidth / 2),
+      direction
+    );
+    console.log(nextProps);
+    this.setState({
+      path
+    });
+  }
   render() {
+
     const {
       startAngle,
       endAngle,
@@ -72,18 +103,18 @@ export default class Arc extends Component {
       ...restProps
     } = this.props;
 
-    const path = makeArcPath(
+    /*const path = makeArcPath(
       (offset.left || 0) + (strokeWidth / 2),
       (offset.top || 0) + (strokeWidth / 2),
       startAngle,
       endAngle,
       radius - (strokeWidth / 2),
       direction
-    );
-
+    );*/
+    //console.log(path);
     return (
       <ART.Shape
-        d={path}
+        d={this.state.path}
         strokeCap={strokeCap}
         strokeWidth={strokeWidth}
         {...restProps}
