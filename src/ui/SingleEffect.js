@@ -23,6 +23,12 @@ export default class SingleEffect extends Component {
             type
         });
     }
+    calculateAddress(address, offset) {
+        let newValue = address[3] + offset;
+        if (newValue > 0x7F) {
+            //newV
+        }
+    }
     paramUpdate = async (offset, value) => {
         console.log(`${offset} ${value}`);
         //await this.props.katana.set()
