@@ -4231,9 +4231,10 @@ react-lifecycles-compat@^1.0.2:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-1.1.0.tgz#6641d0709bd5505329b5c90322147ef2d343485c"
 
-react-native-ble-manager@^6.2.8:
-  version "6.2.8"
-  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.2.8.tgz#ae13d0e21096eb4fd5f69deb52d3433577658750"
+react-native-ble-manager@^6.7.1:
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/react-native-ble-manager/-/react-native-ble-manager-6.7.1.tgz#e0ed7f66971265aaad0197276fd4c4189909ad1d"
+  integrity sha512-GdHuf/W613SQWdQWl0MQviQqayR63iaZ1V8LuIWF7zVs6g2avb584zKlI8WfjdwG9F75Nxmh+yTak9b4Ac46vQ==
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
